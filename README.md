@@ -1,16 +1,7 @@
 # s_messages
 
-A new Flutter project.
+This is a online chatting application which is fully developed in flutter. This is the application which provides their users option to add new friends and chat or share their beset moments with them. This application has greate GUI which faster respond rate. All the database of this application is managed by firebase.
 
-## Getting Started
+# Licence
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To use this applciation or repository you just have to mention my name in the project and it completely free. Enjoy! 😊
