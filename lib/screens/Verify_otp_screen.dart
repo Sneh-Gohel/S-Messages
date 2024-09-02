@@ -2,6 +2,7 @@
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -112,6 +113,9 @@ class _Verify_otp_screen extends State<Verify_otp_screen> {
 
   Future<void> store_user_details() async {
     try {
+      // Get fcm token....
+       final firebaseMessaging = FirebaseMessaging.instance;
+          final fcm = await firebaseMessaging.getToken();
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       DocumentReference docRef =
           firestore.collection(user_id).doc("User_information");
@@ -125,7 +129,8 @@ class _Verify_otp_screen extends State<Verify_otp_screen> {
         'user_name': '${widget.first_name} ${widget.last_name}',
         'about': 'Hey! I am on S Messages.',
         'profile_pic': '/profilePhoto/Defalt_image.jpg',
-        'status': 'no'
+        'status': 'no',
+        'fcm': fcm
       });
 
       print('User added to Firestore successfully!');

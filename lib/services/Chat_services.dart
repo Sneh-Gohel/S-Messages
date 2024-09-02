@@ -1,16 +1,21 @@
 // ignore_for_file: file_names, camel_case_types, non_constant_identifier_names, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:s_messages/services/FCMService.dart';
 import 'package:s_messages/services/Message.dart';
 
 class Chat_services {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> sendMessage(String sender_id, String reciver_id, String message,
-      String chat_id) async {
+      String chat_id, String current_user_name, String reason,String reciver_fcm) async {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       final Timestamp timestamp = Timestamp.now();
+      final FCMService fcmService = FCMService(
+        'asset/fir-messages-66053-firebase-adminsdk-exu43-115940ef4c.json',
+        'fir-messages-66053',
+      );
 
       Message new_message = Message(
         sender_id: sender_id,
@@ -25,7 +30,7 @@ class Chat_services {
           .collection('messages')
           .add(new_message.toMap());
 
-      // updating notification fields...
+      // updating notification fields and sending notification...
 
       DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
           .collection('Chat_rooms')
@@ -33,6 +38,27 @@ class Chat_services {
           .get();
       var chat_details = docSnapshot.data() as Map<String, dynamic>;
 
+      // Sending notificaiton...
+
+      // sending friend request message...
+      if (reason == 'friend_request') {
+        fcmService.sendNotification(
+          'New friend request...',
+          "$current_user_name wants to be your friend.",
+          reciver_fcm,
+        );
+      }
+
+      // sending new chat message...
+      if (reason == 'chat') {
+        fcmService.sendNotification(
+          current_user_name,
+          message,
+          reciver_fcm,
+        );
+      }
+
+      // updadating notification fields...
       if (chat_details[reciver_id] == "No") {
         await FirebaseFirestore.instance
             .collection('Chat_rooms')

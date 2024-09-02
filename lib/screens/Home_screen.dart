@@ -57,6 +57,7 @@ class _Home_screen extends State<Home_screen> {
   final note = FocusNode();
   List<Map<String, dynamic>> statusData = [];
   bool status_loading = true;
+  
 
   Future<void> _showRejectConfirmationDialog(int index) async {
     await showDialog(
@@ -836,7 +837,7 @@ class _Home_screen extends State<Home_screen> {
 
       // creating new chat section.
       cs.sendMessage(widget.user_id, chatInformation[index]['user_id'],
-          "Hello 👋👋", chat_id);
+          "Hello 👋👋", chat_id,userData!['user_name'],"friend_request",chatInformation[index]['fcm']);
 
       check_for_chats();
     } catch (e) {
@@ -1168,7 +1169,11 @@ class _Home_screen extends State<Home_screen> {
                                                                       [
                                                                       'chat_id'],
                                                                   imageUrl[order[
-                                                                      index]]),
+                                                                      index]],userData!['user_name'],chatInformation[
+                                                                          order[
+                                                                              index]]
+                                                                      [
+                                                                      'fcm']),
                                                               transitionsBuilder:
                                                                   (context,
                                                                       animation,
@@ -1600,7 +1605,7 @@ class _Home_screen extends State<Home_screen> {
                                                         '',
                                                         imageUrl['user_img'],
                                                         userData![
-                                                            'status_image']),
+                                                            'status_image'],userData!['user_name'],""),
                                                 transitionsBuilder: (context,
                                                     animation,
                                                     secondaryAnimation,
@@ -1732,7 +1737,9 @@ class _Home_screen extends State<Home_screen> {
                                                   imageUrl[statusData[index - 1]
                                                       ['index']],
                                                   statusData[index - 1]
-                                                      ['status_image']),
+                                                      ['status_image'],userData!['user_name'],chatInformation[
+                                                      statusData[index - 1]
+                                                          ['index']]['fcm']),
                                           transitionsBuilder: (context,
                                               animation,
                                               secondaryAnimation,

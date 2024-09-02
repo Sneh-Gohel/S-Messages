@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, camel_case_types, non_constant_identifier_names, avoid_unnecessary_containers
+// ignore_for_file: file_names, camel_case_types, non_constant_identifier_names, avoid_unnecessary_containers, must_be_immutable
 
 import 'dart:async';
 
@@ -14,8 +14,10 @@ class Status_screen extends StatefulWidget {
   String chat_id;
   String reciver_imageURL;
   String status;
+  String user_name;
+  String reciver_fcm;
   Status_screen(this.user_id, this.reciver_user_id, this.reciver_user_name,
-      this.chat_id, this.reciver_imageURL, this.status,
+      this.chat_id, this.reciver_imageURL, this.status, this.user_name,this.reciver_fcm,
       {super.key});
 
   @override
@@ -211,7 +213,8 @@ class _Status_screen extends State<Status_screen>
                                       widget.reciver_user_id,
                                       widget.reciver_user_name,
                                       widget.chat_id,
-                                      widget.reciver_imageURL),
+                                      widget.reciver_imageURL,
+                                      widget.user_name,widget.reciver_fcm),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) {
                             var begin = const Offset(1.0, 0.0);

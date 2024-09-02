@@ -12,9 +12,11 @@ class Chat_room_screen extends StatefulWidget {
   String reciver_user_name;
   String chat_id;
   String reciver_imageURL;
+  String current_user_name;
+  String reciver_fcm;
 
   Chat_room_screen(this.user_id, this.reciver_user_id, this.reciver_user_name,
-      this.chat_id, this.reciver_imageURL,
+      this.chat_id, this.reciver_imageURL, this.current_user_name,this.reciver_fcm,
       {super.key});
 
   @override
@@ -395,7 +397,9 @@ class _Chat_room_screen extends State<Chat_room_screen> {
                   widget.user_id,
                   widget.reciver_user_id,
                   message_controller.text,
-                  widget.chat_id);
+                  widget.chat_id,
+                  widget.current_user_name,
+                  "chat",widget.reciver_fcm);
               message_controller.clear();
               _scrollToBottom();
             }

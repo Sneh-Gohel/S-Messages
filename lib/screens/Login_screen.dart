@@ -1,10 +1,10 @@
 // ignore_for_file: file_names, camel_case_types, non_constant_identifier_names, unused_local_variable, avoid_print, use_build_context_synchronously
 
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -175,7 +175,33 @@ class _Login_screen extends State<Login_screen> {
             loading_screen = false;
             is_page_changed_to_home = true;
           });
+
+          // Get the device FCM token
+          final firebaseMessaging = FirebaseMessaging.instance;
+          final fcm = await firebaseMessaging.getToken();
+
+          // update fcm
+          final CollectionReference users =
+              FirebaseFirestore.instance.collection(data['user_id']);
+          final DocumentReference docRef = users.doc("User_information");
+          await docRef.set({
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
+            'mail': data['mail'],
+            'mobile_number': data['mobile_number'],
+            'password': password_controller.text,
+            'user_name': data['user_name'],
+            'about': data['about'],
+            'profile_pic': data['profile_pic'],
+            'status': data['status'],
+            'user_id': data['user_id'],
+            'fcm': fcm,
+          });
+
+          // generate auto login file
           generate_auto_login_file();
+
+          // change login page to home screen.
           page_change();
         }
       }
@@ -226,7 +252,9 @@ class _Login_screen extends State<Login_screen> {
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) {
           // return const COA_screen_1();
-          return Home_screen(user_id: user_id_verify,);
+          return Home_screen(
+            user_id: user_id_verify,
+          );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
