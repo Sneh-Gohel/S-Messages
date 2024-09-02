@@ -833,6 +833,8 @@ class _Home_screen extends State<Home_screen> {
         "${chatInformation[index]['user_id']}_timestamp": "No",
         "${widget.user_id}_fav": "None",
         "${chatInformation[index]['user_id']}_fav": "No",
+        "${widget.user_id}_state": "offline",
+        "${chatInformation[index]['user_id']}_state": "offline",
       });
 
       // creating new chat section.

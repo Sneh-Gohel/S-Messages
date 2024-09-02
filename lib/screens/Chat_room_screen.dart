@@ -23,7 +23,7 @@ class Chat_room_screen extends StatefulWidget {
   State<StatefulWidget> createState() => _Chat_room_screen();
 }
 
-class _Chat_room_screen extends State<Chat_room_screen> {
+class _Chat_room_screen extends State<Chat_room_screen> with WidgetsBindingObserver  {
   final message_controller = TextEditingController();
   final message = FocusNode();
   final ScrollController _scrollController = ScrollController();
@@ -37,7 +37,7 @@ class _Chat_room_screen extends State<Chat_room_screen> {
         .doc(widget.chat_id)
         .get();
     chat_details = docSnapshot.data() as Map<String, dynamic>;
-    update_messages_status();
+    setOnline();
   }
 
   Future<void> update_messages_status() async {
@@ -48,8 +48,40 @@ class _Chat_room_screen extends State<Chat_room_screen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      // App is not in the foreground
+      setOffline();
+    } else if (state == AppLifecycleState.resumed) {
+      // App is back in the foreground
+      setOnline();
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    setOffline();
+    return true;
+  }
+
+  Future<void> setOnline() async{
+    await FirebaseFirestore.instance
+        .collection('Chat_rooms')
+        .doc(widget.chat_id)
+        .update({"${widget.user_id}_state": 'online'});
+  }
+  Future<void> setOffline() async{
+    await FirebaseFirestore.instance
+        .collection('Chat_rooms')
+        .doc(widget.chat_id)
+        .update({"${widget.user_id}_state": 'offline'});
+    update_messages_status();
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _scrollController.addListener(() {
       if (_scrollController.offset >=
           _scrollController.position.maxScrollExtent - 50) {
@@ -63,6 +95,7 @@ class _Chat_room_screen extends State<Chat_room_screen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     message_controller.dispose();
     _isAtBottom.dispose();
@@ -71,7 +104,7 @@ class _Chat_room_screen extends State<Chat_room_screen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(onWillPop: _onWillPop,child: Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -97,7 +130,7 @@ class _Chat_room_screen extends State<Chat_room_screen> {
                         ],
                       ),
                       errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                      const Icon(Icons.error),
                       imageBuilder: (context, imageProvider) => Container(
                         width: 30.0,
                         height: 30.0,
@@ -181,7 +214,7 @@ class _Chat_room_screen extends State<Chat_room_screen> {
           ],
         ),
       ),
-    );
+    ),);
   }
 
   // build message list

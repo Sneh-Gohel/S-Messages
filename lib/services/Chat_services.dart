@@ -7,8 +7,14 @@ import 'package:s_messages/services/Message.dart';
 class Chat_services {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(String sender_id, String reciver_id, String message,
-      String chat_id, String current_user_name, String reason,String reciver_fcm) async {
+  Future<void> sendMessage(
+      String sender_id,
+      String reciver_id,
+      String message,
+      String chat_id,
+      String current_user_name,
+      String reason,
+      String reciver_fcm) async {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       final Timestamp timestamp = Timestamp.now();
@@ -47,31 +53,35 @@ class Chat_services {
           "$current_user_name wants to be your friend.",
           reciver_fcm,
         );
+        print("message sent...");
       }
 
       // sending new chat message...
-      if (reason == 'chat') {
-        fcmService.sendNotification(
-          current_user_name,
-          message,
-          reciver_fcm,
-        );
+      if (chat_details['${reciver_id}_state'] == "offline") {
+        if (reason == 'chat') {
+          fcmService.sendNotification(
+            current_user_name,
+            message,
+            reciver_fcm,
+          );
+          print("message sent...");
+        }
       }
 
       // updadating notification fields...
-      if (chat_details[reciver_id] == "No") {
-        await FirebaseFirestore.instance
-            .collection('Chat_rooms')
-            .doc(chat_id)
-            .update({reciver_id: 'Yes'});
+      if (chat_details['${reciver_id}_state'] == 'offline') {
+        if (chat_details[reciver_id] == "No") {
+          await FirebaseFirestore.instance
+              .collection('Chat_rooms')
+              .doc(chat_id)
+              .update({reciver_id: 'Yes'});
 
-        await FirebaseFirestore.instance
-            .collection('Chat_rooms')
-            .doc(chat_id)
-            .update({'${reciver_id}_timestamp': timestamp});
+          await FirebaseFirestore.instance
+              .collection('Chat_rooms')
+              .doc(chat_id)
+              .update({'${reciver_id}_timestamp': timestamp});
+        }
       }
-
-      print("message sent...");
     } catch (e) {
       print("Getting exception : $e");
     }
